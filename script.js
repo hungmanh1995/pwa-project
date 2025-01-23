@@ -183,6 +183,69 @@ function loadTableDataFromLocalStorage() {
 window.addEventListener('DOMContentLoaded', (event) => {
     loadTableDataFromLocalStorage();
 });
-window.addEventListener('DOMContentLoaded', (event) => {
-    loadTableDataFromLocalStorage();
+document.getElementById("export-btn").addEventListener("click", function() {
+    const tableBody = document.getElementById("attendance-body");
+    const tableData = [];
+
+    for (let row of tableBody.rows) {
+        const rowData = {
+            date: row.cells[0].textContent,
+            checkin: row.cells[1].textContent,
+            checkout: row.cells[2].textContent,
+            weekday1: row.cells[3].textContent,
+            weekday2: row.cells[4].textContent,
+            holiday1: row.cells[5].textContent,
+            holiday2: row.cells[6].textContent,
+            holiday3: row.cells[7].textContent,
+            holiday4: row.cells[8].textContent
+        };
+        tableData.push(rowData);
+    }
+
+    const jsonBlob = new Blob([JSON.stringify(tableData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(jsonBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "attendance_data.json";
+    a.click();
+    URL.revokeObjectURL(url);
+});
+document.getElementById("import-btn").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const fileContent = e.target.result;
+        try {
+            const data = JSON.parse(fileContent);
+            const tableBody = document.getElementById("attendance-body");
+
+            // Xóa tất cả các hàng trong bảng trước khi thêm lại
+            tableBody.innerHTML = "";
+
+            data.forEach((rowData) => {
+                const newRow = document.createElement("tr");
+
+                newRow.innerHTML = `
+                    <td>${rowData.date}</td>
+                    <td>${rowData.checkin}</td>
+                    <td>${rowData.checkout}</td>
+                    <td>${rowData.weekday1}</td>
+                    <td>${rowData.weekday2}</td>
+                    <td>${rowData.holiday1}</td>
+                    <td>${rowData.holiday2}</td>
+                    <td>${rowData.holiday3}</td>
+                    <td>${rowData.holiday4}</td>
+                `;
+
+                tableBody.appendChild(newRow);
+            });
+        } catch (error) {
+            alert("Không thể nhập dữ liệu từ tệp, tệp không hợp lệ.");
+        }
+    };
+    reader.readAsText(file);
 });
