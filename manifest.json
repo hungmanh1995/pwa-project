@@ -1,20 +1,20 @@
 {
-  "id": "/pwa-project/",
+  "id": "pwa-project/",
   "name": "Hệ Thống Điểm Danh",
   "short_name": "Điểm Danh",
   "description": "Ứng dụng quản lý điểm danh và giờ tăng ca",
-  "start_url": "/pwa-project/",
+  "start_url": "pwa-project/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "/pwa-project/icons/icon-192x192.png",
+      "src": "pwa-project/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/pwa-project/icons/icon-512x512.png",
+      "src": "pwa-project/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
