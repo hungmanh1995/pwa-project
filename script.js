@@ -152,6 +152,7 @@ function saveTableDataToLocalStorage() {
 
     localStorage.setItem("attendanceData", JSON.stringify(data));
 }
+
 // Tải dữ liệu từ localStorage khi trang được tải
 function loadTableDataFromLocalStorage() {
     const savedData = localStorage.getItem("attendanceData");
@@ -183,6 +184,7 @@ function loadTableDataFromLocalStorage() {
 window.addEventListener('DOMContentLoaded', (event) => {
     loadTableDataFromLocalStorage();
 });
+
 // Xuất CSV
 document.getElementById("export-csv").addEventListener("click", function() {
     const table = document.getElementById("attendance-table");
@@ -221,59 +223,52 @@ document.getElementById("import-csv").addEventListener("change", function(event)
     const file = event.target.files[0];
     if (file && file.type === "text/csv") {
         const reader = new FileReader();
+
         reader.onload = function(e) {
-            const content = e.target.result;
-            const rows = content.split("\n");
+            const contents = e.target.result;
+            const rows = contents.split("\n");
 
-            // Xóa tất cả các dòng trong bảng trước khi nhập
             const tableBody = document.getElementById("attendance-body");
-            tableBody.innerHTML = "";
+            tableBody.innerHTML = ""; // Xóa dữ liệu hiện tại trong bảng
 
-            // Lặp qua từng dòng trong tệp CSV và thêm vào bảng
-            for (let i = 1; i < rows.length; i++) { // Bỏ qua header
-                const row = rows[i].split(",");
-                if (row.length === 9) { // Kiểm tra có đủ cột
+            rows.forEach((row, index) => {
+                if (index > 0 && row) { // Bỏ qua dòng đầu tiên (header)
+                    const cells = row.split(",");
                     const newRow = document.createElement("tr");
+
                     newRow.innerHTML = `
-                        <td>${row[0]}</td>
-                        <td>${row[1]}</td>
-                        <td>${row[2]}</td>
-                        <td>${row[3]}</td>
-                        <td>${row[4]}</td>
-                        <td>${row[5]}</td>
-                        <td>${row[6]}</td>
-                        <td>${row[7]}</td>
-                        <td>${row[8]}</td>
+                        <td>${cells[0]}</td>
+                        <td>${cells[1]}</td>
+                        <td>${cells[2]}</td>
+                        <td>${cells[3]}</td>
+                        <td>${cells[4]}</td>
+                        <td>${cells[5]}</td>
+                        <td>${cells[6]}</td>
+                        <td>${cells[7]}</td>
+                        <td>${cells[8]}</td>
                     `;
+
                     tableBody.appendChild(newRow);
                 }
-            }
+            });
+
+            // Lưu dữ liệu sau khi nhập
+            saveTableDataToLocalStorage();
         };
 
-        reader.readAsText(file); // Đọc tệp CSV
+        reader.readAsText(file);
     } else {
         alert("Vui lòng chọn tệp CSV hợp lệ.");
     }
 });
-document.getElementById("export-btn").addEventListener("click", function() {
-    console.log("Export button clicked");
-    exportToCSV();  // Đảm bảo rằng hàm exportToCSV được gọi
-});
-
-document.getElementById("import-btn").addEventListener("click", function() {
-    console.log("Import button clicked");
-    importFromCSV();  // Đảm bảo rằng hàm importFromCSV được gọi
-});
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        console.log("Attempting to register Service Worker...");
-        
-        navigator.serviceWorker.register('/pwa-project/service-worker.jss')
+      navigator.serviceWorker.register('/service-worker.js')
         .then((registration) => {
-            console.log('Service Worker registered with scope:', registration.scope);
+          console.log('Service Worker registered with scope:', registration.scope);
         })
         .catch((error) => {
-            console.error('Service Worker registration failed:', error);
+          console.log('Service Worker registration failed:', error);
         });
     });
-}
+  }

@@ -13,6 +13,7 @@ const urlsToCache = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
+      console.log('Caching essential files...');
       return cache.addAll(urlsToCache);
     })
   );
@@ -26,6 +27,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (!cacheWhitelist.includes(cacheName)) {
+            console.log(`Deleting old cache: ${cacheName}`);
             return caches.delete(cacheName);
           }
         })
@@ -39,7 +41,26 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
       // Nếu tìm thấy trong cache, trả về từ cache, nếu không, lấy từ mạng
-      return response || fetch(event.request);
+      if (response) {
+        console.log(`Serving from cache: ${event.request.url}`);
+        return response;
+      }
+
+      // Nếu không có trong cache, fetch từ mạng
+      console.log(`Fetching from network: ${event.request.url}`);
+      return fetch(event.request)
+        .then((networkResponse) => {
+          // Lưu tài nguyên vào cache để phục vụ các lần sau
+          if (event.request.url.startsWith(self.location.origin)) {
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, networkResponse.clone());
+            });
+          }
+          return networkResponse;
+        });
+    }).catch((error) => {
+      console.error('Fetch failed; returning offline page.', error);
+      return caches.match('/index.html'); // Trả về trang offline nếu không có mạng
     })
   );
 });
