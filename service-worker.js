@@ -1,4 +1,4 @@
-const CACHE_NAME = 'attendance-system-cache-v1';
+const CACHE_NAME = 'attendance-system-cache-v3';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -9,15 +9,21 @@ const urlsToCache = [
   '/icons/icon-512x512.png'
 ];
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+self.addEventListener("install", (event) => {
+    event.waitUntil(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.addAll([
+          "/", // Trang chính
+          "/index.html", // File HTML
+          "/styles.css", // File CSS
+          "/script.js", // File JS
+          "/manifest.json", // Manifest
+          "/icons/icon-192x192.png", // Icon
+          "/icons/icon-512x512.png", // Icon
+        ]);
       })
-  );
-});
+    );
+  });
 
 self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
