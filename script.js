@@ -183,12 +183,13 @@ function loadTableDataFromLocalStorage() {
 window.addEventListener('DOMContentLoaded', (event) => {
     loadTableDataFromLocalStorage();
 });
-// Xuất CSV
+// Xuất CSV từ bảng chấm công
 document.getElementById("export-csv").addEventListener("click", function() {
     const tableBody = document.getElementById("attendance-body");
     const rows = tableBody.rows;
     let csvContent = "Date,Check-in,Check-out,Weekday 1,Weekday 2,Holiday 1,Holiday 2,Holiday 3,Holiday 4\n"; // Header CSV
 
+    // Duyệt qua từng dòng trong bảng và thêm vào dữ liệu CSV
     for (let row of rows) {
         let rowData = [];
         for (let cell of row.cells) {
@@ -210,7 +211,7 @@ document.getElementById("export-csv").addEventListener("click", function() {
     }
 });
 
-// Nhập CSV
+// Nhập CSV và thêm dữ liệu vào bảng chấm công
 document.getElementById("import-csv-btn").addEventListener("click", function() {
     document.getElementById("import-csv").click(); // Mở cửa sổ chọn tệp khi nhấn nút
 });
@@ -225,6 +226,7 @@ document.getElementById("import-csv").addEventListener("change", function(event)
             const tableBody = document.getElementById("attendance-body");
             tableBody.innerHTML = ""; // Xóa bảng trước khi nhập lại dữ liệu
 
+            // Duyệt qua từng dòng dữ liệu CSV và thêm vào bảng
             for (let row of rows) {
                 const rowData = row.split(","); // Tách các cột trong mỗi dòng
                 if (rowData.length > 1) { // Kiểm tra nếu là dòng có dữ liệu
@@ -234,7 +236,7 @@ document.getElementById("import-csv").addEventListener("change", function(event)
                         newCell.textContent = cellData;
                         newRow.appendChild(newCell);
                     });
-                    tableBody.appendChild(newRow);
+                    tableBody.appendChild(newRow); // Thêm dòng mới vào bảng
                 }
             }
         };
