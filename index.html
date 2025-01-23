@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/manifest.json">
+    <title>Trang Điểm Danh</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Hệ Thống Điểm Danh</h1>
+    </header>
+    <nav>
+        <a href="#home">Trang chủ</a>
+        <a href="#about">Giới thiệu</a>
+        <a href="#contact">Liên hệ</a>
+    </nav>
+    <main>
+        <!-- Form nhập thông tin điểm danh và giờ tăng ca (gộp lại) -->
+        <form id="attendance-form">
+            <h2>Nhập Thông Tin Điểm Danh và Giờ Tăng Ca</h2>
+            <label for="date">Ngày:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="checkin">Giờ vào:</label>
+            <input type="time" id="checkin" name="checkin" required>
+
+            <label for="checkout">Giờ ra:</label>
+            <input type="time" id="checkout" name="checkout" required>
+
+            <h3>Nhập Giờ Tăng Ca</h3>
+            <label for="weekday1">Ngày thường (1.5):</label>
+            <input type="text" id="weekday1" name="weekday1">
+
+            <label for="weekday2">Ngày thường (2):</label>
+            <input type="text" id="weekday2" name="weekday2">
+
+            <label for="holiday1">Ngày nghỉ 7-CN (2):</label>
+            <input type="text" id="holiday1" name="holiday1">
+
+            <label for="holiday2">Ngày nghỉ 7-CN (2.7):</label>
+            <input type="text" id="holiday2" name="holiday2">
+
+            <label for="holiday3">Ngày lễ (3):</label>
+            <input type="text" id="holiday3" name="holiday3">
+
+            <label for="holiday4">Ngày lễ (3.9):</label>
+            <input type="text" id="holiday4" name="holiday4">
+
+            <button type="button" id="save-attendance">Lưu</button>
+        </form>
+
+        <!-- Bảng chấm công -->
+        <div class="attendance-table">
+            <h2>Bảng Chấm Công</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Giờ Vào</th>
+                        <th>Giờ Ra</th>
+                        <th>Ngày thường (1.5)</th>
+                        <th>Ngày thường (2)</th>
+                        <th>Ngày nghỉ 7-CN (2)</th>
+                        <th>Ngày nghỉ 7-CN (2.7)</th>
+                        <th>Ngày lễ (3)</th>
+                        <th>Ngày lễ (3.9)</th>
+                    </tr>
+                </thead>
+                <tbody id="attendance-body">
+                </tbody>
+                <tfoot>
+                    <tr id="total-row">
+                        <td colspan="3">Tổng</td>
+                        <td id="total-weekday1">0</td>
+                        <td id="total-weekday2">0</td>
+                        <td id="total-holiday1">0</td>
+                        <td id="total-holiday2">0</td>
+                        <td id="total-holiday3">0</td>
+                        <td id="total-holiday4">0</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Hệ Thống Điểm Danh</p>
+    </footer>
+
+    <script>
+        document.getElementById("save-attendance").addEventListener("click", function() {
+            // Lấy giá trị từ form
+            const date = document.getElementById("date").value;
+            const checkin = document.getElementById("checkin").value;
+            const checkout = document.getElementById("checkout").value;
+            const weekday1 = parseFloat(document.getElementById("weekday1").value) || 0;
+            const weekday2 = parseFloat(document.getElementById("weekday2").value) || 0;
+            const holiday1 = parseFloat(document.getElementById("holiday1").value) || 0;
+            const holiday2 = parseFloat(document.getElementById("holiday2").value) || 0;
+            const holiday3 = parseFloat(document.getElementById("holiday3").value) || 0;
+            const holiday4 = parseFloat(document.getElementById("holiday4").value) || 0;
+
+            // Kiểm tra nếu ngày chưa được nhập
+            if (!date) {
+                alert("Vui lòng chọn ngày để lưu thông tin.");
+                return;
+            }
+
+            const tableBody = document.getElementById("attendance-body");
+            const rows = tableBody.getElementsByTagName("tr");
+
+            let rowExists = false;
+
+            // Kiểm tra xem ngày đã có trong bảng chấm công chưa
+            for (let row of rows) {
+                const dateCell = row.cells[0];
+                if (dateCell.textContent === date) {
+                    // Nếu ngày đã có, cập nhật giờ vào, giờ ra và giờ tăng ca vào dòng đó
+                    row.cells[1].textContent = checkin;
+                    row.cells[2].textContent = checkout;
+                    row.cells[3].textContent = weekday1;
+                    row.cells[4].textContent = weekday2;
+                    row.cells[5].textContent = holiday1;
+                    row.cells[6].textContent = holiday2;
+                    row.cells[7].textContent = holiday3;
+                    row.cells[8].textContent = holiday4;
+                    rowExists = true;
+                    break;
+                }
+            }
+
+            // Nếu ngày chưa có trong bảng, tạo một dòng mới
+            if (!rowExists) {
+                const newRow = document.createElement("tr");
+
+                newRow.innerHTML = `
+                    <td>${date}</td>
+                    <td>${checkin}</td>
+                    <td>${checkout}</td>
+                    <td>${weekday1}</td>
+                    <td>${weekday2}</td>
+                    <td>${holiday1}</td>
+                    <td>${holiday2}</td>
+                    <td>${holiday3}</td>
+                    <td>${holiday4}</td>
+                `;
+
+                tableBody.appendChild(newRow);
+            }
+
+            // Cập nhật tổng các cột
+            updateTotalRow();
+
+            // Xóa dữ liệu trong form
+            document.getElementById("attendance-form").reset();
+        });
+
+        function updateTotalRow() {
+            let totalWeekday1 = 0;
+            let totalWeekday2 = 0;
+            let totalHoliday1 = 0;
+            let totalHoliday2 = 0;
+            let totalHoliday3 = 0;
+            let totalHoliday4 = 0;
+
+            const rows = document.querySelectorAll("#attendance-body tr");
+            rows.forEach(row => {
+                totalWeekday1 += parseFloat(row.cells[3].textContent) || 0;
+                totalWeekday2 += parseFloat(row.cells[4].textContent) || 0;
+                totalHoliday1 += parseFloat(row.cells[5].textContent) || 0;
+                totalHoliday2 += parseFloat(row.cells[6].textContent) || 0;
+                totalHoliday3 += parseFloat(row.cells[7].textContent) || 0;
+                totalHoliday4 += parseFloat(row.cells[8].textContent) || 0;
+            });
+
+            // Cập nhật dòng tổng
+            document.getElementById("total-weekday1").textContent = totalWeekday1;
+            document.getElementById("total-weekday2").textContent = totalWeekday2;
+            document.getElementById("total-holiday1").textContent = totalHoliday1;
+            document.getElementById("total-holiday2").textContent = totalHoliday2;
+            document.getElementById("total-holiday3").textContent = totalHoliday3;
+            document.getElementById("total-holiday4").textContent = totalHoliday4;
+        }
+    </script>
+</body>
+</html>
