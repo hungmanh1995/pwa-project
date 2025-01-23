@@ -183,7 +183,8 @@ function loadTableDataFromLocalStorage() {
 window.addEventListener('DOMContentLoaded', (event) => {
     loadTableDataFromLocalStorage();
 });
-document.getElementById("export-btn").addEventListener("click", function() {
+// Xuất CSV
+document.getElementById("export-csv").addEventListener("click", function() {
     const tableBody = document.getElementById("attendance-body");
     const rows = tableBody.rows;
     let csvContent = "Date,Check-in,Check-out,Weekday 1,Weekday 2,Holiday 1,Holiday 2,Holiday 3,Holiday 4\n"; // Header CSV
@@ -208,7 +209,13 @@ document.getElementById("export-btn").addEventListener("click", function() {
         document.body.removeChild(link);
     }
 });
-document.getElementById("import-btn").addEventListener("change", function(event) {
+
+// Nhập CSV
+document.getElementById("import-csv-btn").addEventListener("click", function() {
+    document.getElementById("import-csv").click(); // Mở cửa sổ chọn tệp khi nhấn nút
+});
+
+document.getElementById("import-csv").addEventListener("change", function(event) {
     const file = event.target.files[0]; // Lấy tệp người dùng chọn
     if (file) {
         const reader = new FileReader();
