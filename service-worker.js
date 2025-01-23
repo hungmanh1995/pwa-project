@@ -1,13 +1,13 @@
 const CACHE_NAME = 'attendance-system-cache-v3';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',  // Kiểm tra lại đường dẫn này
-  '/script.js',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
-  '/icons/favicon.ico'  // Thêm favicon vào cache
+  '/pwa-project/',  // Đảm bảo đúng thư mục gốc của PWA
+  '/pwa-project/index.html',
+  '/pwa-project/styles.css',  // Đúng đường dẫn tới file CSS
+  '/pwa-project/script.js',
+  '/pwa-project/manifest.json',
+  '/pwa-project/icons/icon-192x192.png',
+  '/pwa-project/icons/icon-512x512.png',
+  '/pwa-project/icons/favicon.ico'  // Đúng đường dẫn tới favicon
 ];
 
 // Install Service Worker và cache các tài nguyên
