@@ -268,7 +268,7 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         console.log("Attempting to register Service Worker...");
         
-        navigator.serviceWorker.register('/service-worker.js')
+        navigator.serviceWorker.register('/pwa-project/service-worker.jss')
         .then((registration) => {
             console.log('Service Worker registered with scope:', registration.scope);
         })
