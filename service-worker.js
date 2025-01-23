@@ -2,11 +2,12 @@ const CACHE_NAME = 'attendance-system-cache-v3';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/styles.css',
+  '/styles.css',  // Kiểm tra lại đường dẫn này
   '/script.js',
   '/manifest.json',
   '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/icons/icon-512x512.png',
+  '/icons/favicon.ico'  // Thêm favicon vào cache
 ];
 
 // Install Service Worker và cache các tài nguyên
