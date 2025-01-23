@@ -185,67 +185,52 @@ window.addEventListener('DOMContentLoaded', (event) => {
 });
 document.getElementById("export-btn").addEventListener("click", function() {
     const tableBody = document.getElementById("attendance-body");
-    const tableData = [];
+    const rows = tableBody.rows;
+    let csvContent = "Date,Check-in,Check-out,Weekday 1,Weekday 2,Holiday 1,Holiday 2,Holiday 3,Holiday 4\n"; // Header CSV
 
-    for (let row of tableBody.rows) {
-        const rowData = {
-            date: row.cells[0].textContent,
-            checkin: row.cells[1].textContent,
-            checkout: row.cells[2].textContent,
-            weekday1: row.cells[3].textContent,
-            weekday2: row.cells[4].textContent,
-            holiday1: row.cells[5].textContent,
-            holiday2: row.cells[6].textContent,
-            holiday3: row.cells[7].textContent,
-            holiday4: row.cells[8].textContent
-        };
-        tableData.push(rowData);
+    for (let row of rows) {
+        let rowData = [];
+        for (let cell of row.cells) {
+            rowData.push(cell.textContent); // Lấy dữ liệu từ các ô trong hàng
+        }
+        csvContent += rowData.join(",") + "\n"; // Nối các ô trong hàng thành chuỗi CSV
     }
 
-    const jsonBlob = new Blob([JSON.stringify(tableData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(jsonBlob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = "attendance_data.json";
-    a.click();
-    URL.revokeObjectURL(url);
+    // Tạo file CSV và tải về
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    if (link.download !== undefined) { // Kiểm tra trình duyệt hỗ trợ download
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "attendance_data.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 });
 document.getElementById("import-btn").addEventListener("change", function(event) {
-    const file = event.target.files[0];
-    if (!file) {
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const fileContent = e.target.result;
-        try {
-            const data = JSON.parse(fileContent);
+    const file = event.target.files[0]; // Lấy tệp người dùng chọn
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const csvContent = e.target.result;
+            const rows = csvContent.split("\n"); // Tách các dòng trong tệp CSV
             const tableBody = document.getElementById("attendance-body");
+            tableBody.innerHTML = ""; // Xóa bảng trước khi nhập lại dữ liệu
 
-            // Xóa tất cả các hàng trong bảng trước khi thêm lại
-            tableBody.innerHTML = "";
-
-            data.forEach((rowData) => {
-                const newRow = document.createElement("tr");
-
-                newRow.innerHTML = `
-                    <td>${rowData.date}</td>
-                    <td>${rowData.checkin}</td>
-                    <td>${rowData.checkout}</td>
-                    <td>${rowData.weekday1}</td>
-                    <td>${rowData.weekday2}</td>
-                    <td>${rowData.holiday1}</td>
-                    <td>${rowData.holiday2}</td>
-                    <td>${rowData.holiday3}</td>
-                    <td>${rowData.holiday4}</td>
-                `;
-
-                tableBody.appendChild(newRow);
-            });
-        } catch (error) {
-            alert("Không thể nhập dữ liệu từ tệp, tệp không hợp lệ.");
-        }
-    };
-    reader.readAsText(file);
+            for (let row of rows) {
+                const rowData = row.split(","); // Tách các cột trong mỗi dòng
+                if (rowData.length > 1) { // Kiểm tra nếu là dòng có dữ liệu
+                    const newRow = document.createElement("tr");
+                    rowData.forEach(cellData => {
+                        const newCell = document.createElement("td");
+                        newCell.textContent = cellData;
+                        newRow.appendChild(newCell);
+                    });
+                    tableBody.appendChild(newRow);
+                }
+            }
+        };
+        reader.readAsText(file); // Đọc nội dung tệp CSV
+    }
 });
