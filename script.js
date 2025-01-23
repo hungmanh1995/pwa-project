@@ -183,63 +183,75 @@ function loadTableDataFromLocalStorage() {
 window.addEventListener('DOMContentLoaded', (event) => {
     loadTableDataFromLocalStorage();
 });
-// Xuất CSV từ bảng chấm công
+// Xuất CSV
 document.getElementById("export-csv").addEventListener("click", function() {
-    const tableBody = document.getElementById("attendance-body");
-    const rows = tableBody.rows;
-    let csvContent = "Date,Check-in,Check-out,Weekday 1,Weekday 2,Holiday 1,Holiday 2,Holiday 3,Holiday 4\n"; // Header CSV
+    const table = document.getElementById("attendance-table");
+    const rows = table.rows;
+    let csvContent = "Date,Check-in,Check-out,Weekday 1,Weekday 2,Holiday 1,Holiday 2,Holiday 3,Holiday 4\n";
 
-    // Duyệt qua từng dòng trong bảng và thêm vào dữ liệu CSV
-    for (let row of rows) {
+    // Lặp qua từng dòng trong bảng và thêm vào nội dung CSV
+    for (let i = 1; i < rows.length; i++) { // Bắt đầu từ i = 1 để bỏ qua header
+        let row = rows[i];
         let rowData = [];
-        for (let cell of row.cells) {
-            rowData.push(cell.textContent); // Lấy dữ liệu từ các ô trong hàng
+        
+        for (let j = 0; j < row.cells.length; j++) {
+            rowData.push(row.cells[j].textContent);
         }
-        csvContent += rowData.join(",") + "\n"; // Nối các ô trong hàng thành chuỗi CSV
+
+        csvContent += rowData.join(",") + "\n";
     }
 
-    // Tạo file CSV và tải về
+    // Tạo tệp CSV và tải về
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
-    if (link.download !== undefined) { // Kiểm tra trình duyệt hỗ trợ download
+    if (link.download !== undefined) {
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
-        link.setAttribute("download", "attendance_data.csv");
-        document.body.appendChild(link);
+        link.setAttribute("download", "attendance.csv");
         link.click();
-        document.body.removeChild(link);
     }
 });
 
-// Nhập CSV và thêm dữ liệu vào bảng chấm công
+// Nhập CSV
 document.getElementById("import-csv-btn").addEventListener("click", function() {
-    document.getElementById("import-csv").click(); // Mở cửa sổ chọn tệp khi nhấn nút
+    document.getElementById("import-csv").click(); // Mở hộp thoại chọn tệp CSV
 });
 
 document.getElementById("import-csv").addEventListener("change", function(event) {
-    const file = event.target.files[0]; // Lấy tệp người dùng chọn
-    if (file) {
+    const file = event.target.files[0];
+    if (file && file.type === "text/csv") {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const csvContent = e.target.result;
-            const rows = csvContent.split("\n"); // Tách các dòng trong tệp CSV
-            const tableBody = document.getElementById("attendance-body");
-            tableBody.innerHTML = ""; // Xóa bảng trước khi nhập lại dữ liệu
+            const content = e.target.result;
+            const rows = content.split("\n");
 
-            // Duyệt qua từng dòng dữ liệu CSV và thêm vào bảng
-            for (let row of rows) {
-                const rowData = row.split(","); // Tách các cột trong mỗi dòng
-                if (rowData.length > 1) { // Kiểm tra nếu là dòng có dữ liệu
+            // Xóa tất cả các dòng trong bảng trước khi nhập
+            const tableBody = document.getElementById("attendance-body");
+            tableBody.innerHTML = "";
+
+            // Lặp qua từng dòng trong tệp CSV và thêm vào bảng
+            for (let i = 1; i < rows.length; i++) { // Bỏ qua header
+                const row = rows[i].split(",");
+                if (row.length === 9) { // Kiểm tra có đủ cột
                     const newRow = document.createElement("tr");
-                    rowData.forEach(cellData => {
-                        const newCell = document.createElement("td");
-                        newCell.textContent = cellData;
-                        newRow.appendChild(newCell);
-                    });
-                    tableBody.appendChild(newRow); // Thêm dòng mới vào bảng
+                    newRow.innerHTML = `
+                        <td>${row[0]}</td>
+                        <td>${row[1]}</td>
+                        <td>${row[2]}</td>
+                        <td>${row[3]}</td>
+                        <td>${row[4]}</td>
+                        <td>${row[5]}</td>
+                        <td>${row[6]}</td>
+                        <td>${row[7]}</td>
+                        <td>${row[8]}</td>
+                    `;
+                    tableBody.appendChild(newRow);
                 }
             }
         };
-        reader.readAsText(file); // Đọc nội dung tệp CSV
+
+        reader.readAsText(file); // Đọc tệp CSV
+    } else {
+        alert("Vui lòng chọn tệp CSV hợp lệ.");
     }
 });
