@@ -54,6 +54,9 @@ document.getElementById("save-overtime").addEventListener("click", function() {
         tableBody.appendChild(newRow);
     }
 
+    // Lưu dữ liệu bảng vào localStorage
+    saveTableDataToLocalStorage();
+
     // Xóa dữ liệu trong các ô nhập giờ tăng ca
     document.querySelectorAll(".overtime input").forEach(input => input.value = "");
 });
@@ -118,19 +121,68 @@ document.getElementById("save-attendance").addEventListener("click", function() 
         tableBody.appendChild(newRow);
     }
 
+    // Lưu dữ liệu bảng vào localStorage
+    saveTableDataToLocalStorage();
+
     // Xóa dữ liệu trong form nhập điểm danh
     document.getElementById("attendance-form").reset();
     document.querySelectorAll(".overtime input").forEach(input => input.value = "");
 });
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then((registration) => {
-          console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .catch((error) => {
-          console.log('Service Worker registration failed:', error);
+
+// Lưu dữ liệu bảng vào localStorage
+function saveTableDataToLocalStorage() {
+    const tableBody = document.getElementById("attendance-body");
+    const rows = tableBody.getElementsByTagName("tr");
+    const data = [];
+
+    for (let row of rows) {
+        const rowData = {
+            date: row.cells[0].textContent,
+            checkin: row.cells[1].textContent,
+            checkout: row.cells[2].textContent,
+            weekday1: row.cells[3].textContent,
+            weekday2: row.cells[4].textContent,
+            holiday1: row.cells[5].textContent,
+            holiday2: row.cells[6].textContent,
+            holiday3: row.cells[7].textContent,
+            holiday4: row.cells[8].textContent
+        };
+        data.push(rowData);
+    }
+
+    localStorage.setItem("attendanceData", JSON.stringify(data));
+}
+// Tải dữ liệu từ localStorage khi trang được tải
+function loadTableDataFromLocalStorage() {
+    const savedData = localStorage.getItem("attendanceData");
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        const tableBody = document.getElementById("attendance-body");
+
+        data.forEach((rowData) => {
+            const newRow = document.createElement("tr");
+
+            newRow.innerHTML = `
+                <td>${rowData.date}</td>
+                <td>${rowData.checkin}</td>
+                <td>${rowData.checkout}</td>
+                <td>${rowData.weekday1}</td>
+                <td>${rowData.weekday2}</td>
+                <td>${rowData.holiday1}</td>
+                <td>${rowData.holiday2}</td>
+                <td>${rowData.holiday3}</td>
+                <td>${rowData.holiday4}</td>
+            `;
+
+            tableBody.appendChild(newRow);
         });
-    });
-  }
-  
+    }
+}
+
+// Gọi hàm tải dữ liệu khi trang được tải
+window.addEventListener('DOMContentLoaded', (event) => {
+    loadTableDataFromLocalStorage();
+});
+window.addEventListener('DOMContentLoaded', (event) => {
+    loadTableDataFromLocalStorage();
+});
