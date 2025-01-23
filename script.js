@@ -255,3 +255,25 @@ document.getElementById("import-csv").addEventListener("change", function(event)
         alert("Vui lòng chọn tệp CSV hợp lệ.");
     }
 });
+document.getElementById("export-btn").addEventListener("click", function() {
+    console.log("Export button clicked");
+    exportToCSV();  // Đảm bảo rằng hàm exportToCSV được gọi
+});
+
+document.getElementById("import-btn").addEventListener("click", function() {
+    console.log("Import button clicked");
+    importFromCSV();  // Đảm bảo rằng hàm importFromCSV được gọi
+});
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        console.log("Attempting to register Service Worker...");
+        
+        navigator.serviceWorker.register('/sw.js')
+        .then((registration) => {
+            console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch((error) => {
+            console.error('Service Worker registration failed:', error);
+        });
+    });
+}
