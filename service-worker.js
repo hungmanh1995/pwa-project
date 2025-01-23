@@ -9,22 +9,16 @@ const urlsToCache = [
   '/icons/icon-512x512.png'
 ];
 
+// Install Service Worker và cache các tài nguyên
 self.addEventListener("install", (event) => {
-    event.waitUntil(
-      caches.open(CACHE_NAME).then((cache) => {
-        return cache.addAll([
-          "/", // Trang chính
-          "/index.html", // File HTML
-          "/styles.css", // File CSS
-          "/script.js", // File JS
-          "/manifest.json", // Manifest
-          "/icons/icon-192x192.png", // Icon
-          "/icons/icon-512x512.png", // Icon
-        ]);
-      })
-    );
-  });
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(urlsToCache);
+    })
+  );
+});
 
+// Aktivating và dọn dẹp các cache cũ
 self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -40,11 +34,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Xử lý yêu cầu tài nguyên và phục vụ từ cache nếu có
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        return response || fetch(event.request);
-      })
+    caches.match(event.request).then((response) => {
+      // Nếu tìm thấy trong cache, trả về từ cache, nếu không, lấy từ mạng
+      return response || fetch(event.request);
+    })
   );
 });
