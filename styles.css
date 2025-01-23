@@ -120,3 +120,41 @@ footer {
     width: 100%;
     bottom: 0;
 }
+.attendance-container {
+    display: flex; /* Sử dụng flexbox để bố trí các phần tử */
+    justify-content: space-between; /* Căn chỉnh các phần tử ra ngoài 2 bên */
+    align-items: flex-start; /* Căn chỉnh các phần tử theo chiều dọc ở đầu */
+    margin: 20px;
+  }
+  
+  #attendance-table {
+    width: 70%; /* Chiếm 70% chiều rộng của container */
+    border-collapse: collapse; /* Xóa khoảng cách giữa các ô trong bảng */
+  }
+  
+  #attendance-table th, #attendance-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .button-container {
+    display: flex;
+    flex-direction: column; /* Đặt các nút theo chiều dọc */
+    align-items: flex-start;
+    margin-left: 20px; /* Khoảng cách giữa bảng và các nút */
+  }
+  
+  .button-container button {
+    margin: 5px 0; /* Khoảng cách giữa các nút */
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .button-container button:hover {
+    background-color: #45a049; /* Hiệu ứng khi di chuột vào nút */
+  }
+  
