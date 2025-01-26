@@ -150,33 +150,44 @@ function saveTableDataToLocalStorage() {
         data.push(rowData);
     }
 
+    // Lưu vào localStorage
     localStorage.setItem("attendanceData", JSON.stringify(data));
 }
+
 
 // Tải dữ liệu từ localStorage khi trang được tải
 function loadTableDataFromLocalStorage() {
     const savedData = localStorage.getItem("attendanceData");
+
+    // Kiểm tra nếu có dữ liệu lưu trong localStorage
     if (savedData) {
-        const data = JSON.parse(savedData);
-        const tableBody = document.getElementById("attendance-body");
+        try {
+            const data = JSON.parse(savedData);
+            const tableBody = document.getElementById("attendance-body");
 
-        data.forEach((rowData) => {
-            const newRow = document.createElement("tr");
+            // Xóa dữ liệu cũ trong bảng trước khi thêm dữ liệu mới
+            tableBody.innerHTML = "";
 
-            newRow.innerHTML = `
-                <td>${rowData.date}</td>
-                <td>${rowData.checkin}</td>
-                <td>${rowData.checkout}</td>
-                <td>${rowData.weekday1}</td>
-                <td>${rowData.weekday2}</td>
-                <td>${rowData.holiday1}</td>
-                <td>${rowData.holiday2}</td>
-                <td>${rowData.holiday3}</td>
-                <td>${rowData.holiday4}</td>
-            `;
+            data.forEach((rowData) => {
+                const newRow = document.createElement("tr");
 
-            tableBody.appendChild(newRow);
-        });
+                newRow.innerHTML = `
+                    <td>${rowData.date}</td>
+                    <td>${rowData.checkin}</td>
+                    <td>${rowData.checkout}</td>
+                    <td>${rowData.weekday1}</td>
+                    <td>${rowData.weekday2}</td>
+                    <td>${rowData.holiday1}</td>
+                    <td>${rowData.holiday2}</td>
+                    <td>${rowData.holiday3}</td>
+                    <td>${rowData.holiday4}</td>
+                `;
+
+                tableBody.appendChild(newRow);
+            });
+        } catch (error) {
+            console.error("Lỗi khi tải dữ liệu từ localStorage:", error);
+        }
     }
 }
 
@@ -196,3 +207,10 @@ if ('serviceWorker' in navigator) {
         });
     });
   }
+  if (typeof(Storage) !== "undefined") {
+    // localStorage có thể sử dụng
+    console.log("localStorage is supported");
+} else {
+    // localStorage không được hỗ trợ
+    console.log("localStorage is not supported in this browser");
+}
