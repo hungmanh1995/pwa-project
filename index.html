@@ -18,7 +18,7 @@
         <a href="#contact">Liên hệ</a>
     </nav>
     <main>
-        <!-- Form nhập thông tin điểm danh và giờ tăng ca (gộp lại) -->
+        <!-- Form nhập thông tin điểm danh và giờ tăng ca -->
         <form id="attendance-form">
             <h2>Nhập Thông Tin Điểm Danh và Giờ Tăng Ca</h2>
             <label for="date">Ngày:</label>
@@ -50,7 +50,6 @@
             <input type="text" id="holiday4" name="holiday4">
 
             <button type="button" id="save-attendance">Lưu</button>
-            
         </form>
 
         <!-- Bảng chấm công -->
@@ -84,16 +83,6 @@
                     </tr>
                 </tfoot>
             </table>
-            
-        </div>
-        <!-- Div chứa các nút lưu và xuất -->
-        <div class="button-container">
-            <!-- Nút Xuất CSV -->
-            <button id="export-csv">Xuất CSV</button>
-
-            <!-- Nút Nhập CSV -->
-            <input type="file" id="import-csv" accept=".csv" style="display:none;" />
-            <button id="import-csv-btn">Nhập CSV</button>
         </div>
     </main>
     <footer>
@@ -146,7 +135,7 @@
             if (!rowExists) {
                 const newRow = document.createElement("tr");
 
-                newRow.innerHTML = `
+                newRow.innerHTML = ` 
                     <td>${date}</td>
                     <td>${checkin}</td>
                     <td>${checkout}</td>
